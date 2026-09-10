@@ -1,0 +1,134 @@
+.burger-menu {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+
+    z-index: 99999;
+
+    width: 100%;
+    height: 100%;
+
+    background: var(--card-background);
+
+    overflow: hidden;
+
+    &__panel {
+        display: flex;
+        flex-direction: column;
+
+        width: 100%;
+        height: 100%;
+
+        background: var(--card-background);
+    }
+
+    &__header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        flex-shrink: 0;
+
+        height: 64px;
+        padding: 0 20px;
+
+        border-bottom: 1px solid var(--border-color);
+
+        background: var(--card-background);
+
+        color: var(--text-primary);
+
+        font-size: 18px;
+        font-weight: 600;
+    }
+
+    &__close {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        width: 42px;
+        height: 42px;
+        padding: 0;
+
+        border: 1px solid var(--border-color);
+        border-radius: 11px;
+
+        background: var(--profile-background);
+
+        color: var(--text-primary);
+
+        cursor: pointer;
+
+        &:hover {
+            border-color: var(--accent-color);
+        }
+    }
+
+    &__navigation {
+        display: flex;
+        flex-direction: column;
+
+        width: 100%;
+        max-width: 500px;
+
+        margin: auto;
+        padding: 20px;
+    }
+
+    &__link {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        min-height: 64px;
+        padding: 0 8px;
+
+        border-bottom: 1px solid var(--border-color);
+
+        color: var(--text-primary);
+        text-decoration: none;
+
+        &:hover {
+            color: var(--accent-color);
+        }
+
+        &:last-child {
+            border-bottom: 0;
+        }
+    }
+
+    &__link-content {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+
+        color: inherit;
+
+        span {
+            font-size: 15px;
+            font-weight: 500;
+        }
+    }
+
+    &__count {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        width: 20px;
+        height: 20px;
+        margin-left: auto;
+
+        border-radius: 50%;
+
+        background: var(--accent-color);
+        color: #fff;
+
+        font-size: 9px;
+        font-weight: 700;
+        line-height: 1;
+    }
+}

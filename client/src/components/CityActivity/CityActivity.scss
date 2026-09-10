@@ -1,0 +1,182 @@
+.city-activity {
+  padding: 40px 24px;
+
+  &__container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 26px 28px;
+
+    border: 1px solid var(--border-color);
+    border-radius: 18px;
+
+    background: var(--card-background);
+  }
+
+  &__top {
+    display: flex;
+    align-items: center;
+
+    padding-bottom: 18px;
+
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  &__title {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+
+    color: var(--text-primary);
+
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.8px;
+  }
+
+  &__main {
+    display: grid;
+    grid-template-columns: 1.3fr 1fr 1fr;
+
+    padding: 28px 0;
+  }
+
+  &__people,
+  &__location,
+  &__peak {
+    padding: 4px 20px;
+  }
+
+  &__location,
+  &__peak {
+    border-left: 1px solid var(--border-color);
+  }
+
+  &__label,
+  &__small-label {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+
+    color: var(--text-muted);
+
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.6px;
+  }
+
+  &__dot {
+    width: 8px;
+    height: 8px;
+
+    border-radius: 50%;
+
+    background: var(--accent-color);
+  }
+
+  &__count {
+    margin-top: 8px;
+
+    color: var(--text-primary);
+
+    font-size: 42px;
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: -1.5px;
+  }
+
+  &__people-text,
+  &__location p,
+  &__peak p {
+    margin: 9px 0 0;
+
+    color: var(--text-secondary);
+
+    font-size: 12px;
+    line-height: 1.5;
+  }
+
+  &__location h3 {
+    margin: 14px 0 0;
+
+    color: var(--text-primary);
+
+    font-size: 18px;
+    font-weight: 600;
+  }
+
+  &__peak-time {
+    margin-top: 14px;
+
+    color: var(--accent-color);
+
+    font-size: 30px;
+    font-weight: 700;
+  }
+}
+
+@media (max-width: 900px) {
+  .city-activity {
+    padding: 32px 20px;
+
+    &__container {
+      padding: 22px;
+    }
+
+    &__main {
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+
+    &__people {
+      grid-column: 1 / -1;
+
+      padding-bottom: 20px;
+
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    &__location {
+      border-left: 0;
+    }
+  }
+}
+
+@media (max-width: 600px) {
+  .city-activity {
+    padding: 24px 16px;
+
+    &__container {
+      padding: 20px;
+    }
+
+    &__main {
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+
+    &__people,
+    &__location,
+    &__peak {
+      padding: 0 0 20px;
+    }
+
+    &__location,
+    &__peak {
+      border-left: 0;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    &__peak {
+      padding-bottom: 0;
+      border-bottom: 0;
+    }
+
+    &__count {
+      font-size: 36px;
+    }
+
+    &__title {
+      font-size: 11px;
+    }
+  }
+}
