@@ -5,13 +5,10 @@ import Home from './pages/Home';
 import Events from './pages/Events';
 import Favorites from './pages/Favorites';
 import Rights from './pages/Rights';
+import Login from './pages/Login';
 
 function EventDetails() {
   return <h1>Event details</h1>;
-}
-
-function Login() {
-  return <h1>Login</h1>;
 }
 
 function Register() {

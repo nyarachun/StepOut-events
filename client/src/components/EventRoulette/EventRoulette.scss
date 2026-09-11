@@ -5,15 +5,18 @@
         display: grid;
         grid-template-columns: 1fr 1fr;
         align-items: center;
-        gap: 80px;
 
-        max-width: 1200px;
+        gap: 70px;
+
+        max-width: 1100px;
         margin: 0 auto;
     }
 
     &__info {
         display: flex;
         flex-direction: column;
+
+        max-width: 500px;
     }
 
     &__eyebrow {
@@ -158,6 +161,7 @@
         align-items: center;
         justify-content: center;
 
+        width: 100%;
         min-width: 0;
     }
 
@@ -166,7 +170,9 @@
         display: flex;
         align-items: center;
         justify-content: center;
+
         flex-direction: column;
+
         gap: 18px;
 
         width: 300px;
@@ -206,6 +212,19 @@
     &__rolling-icon {
         animation: roulette-spin 0.8s ease-in-out;
     }
+
+    &__selected-event {
+        width: 100%;
+        max-width: 380px;
+    }
+
+    &__message {
+        margin: 12px 0 0;
+
+        color: var(--text-muted);
+
+        font-size: 12px;
+    }
 }
 
 @keyframes roulette-spin {
@@ -228,7 +247,10 @@
 
         &__container {
             grid-template-columns: 1fr 1fr;
+
             gap: 40px;
+
+            max-width: 900px;
         }
 
         &__title {
@@ -244,6 +266,10 @@
             width: 250px;
             height: 320px;
         }
+
+        &__selected-event {
+            max-width: 340px;
+        }
     }
 }
 
@@ -253,11 +279,16 @@
 
         &__container {
             grid-template-columns: 1fr;
+
             gap: 32px;
+
+            max-width: 100%;
         }
 
         &__info {
             align-items: center;
+
+            max-width: none;
 
             text-align: center;
         }
@@ -278,31 +309,8 @@
             height: 280px;
         }
 
-        &__event {
+        &__selected-event {
             max-width: 100%;
         }
-
-        &__event>img {
-            height: 180px;
-        }
     }
-}
-
-.event-roulette__selected-event {
-  width: 100%;
-  max-width: 380px;
-}
-
-@media (max-width: 600px) {
-  .event-roulette__selected-event {
-    max-width: 100%;
-  }
-}
-
-.event-roulette__message {
-  margin: 12px 0 0;
-
-  color: var(--text-muted);
-
-  font-size: 12px;
 }

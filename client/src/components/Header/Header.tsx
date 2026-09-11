@@ -157,7 +157,7 @@ export const Header = () => {
                     <nav className="header__navigation">
                         <a
                             className="header__icon-link"
-                            href="/favorites"
+                            href="StepOut-events/#//favorites"
                             aria-label="Favorites"
                         >
                             <Heart size={21} />
