@@ -7,21 +7,24 @@ import {
 import axios from 'axios';
 import {
     useState,
+    type FormEvent,
 } from 'react';
-import type { FormEvent } from 'react';
 import {
     Link,
     useNavigate,
 } from 'react-router-dom';
 
-import './Login.scss';
+import { api } from '../../api/api';
+import { useAuth } from '../../context/AuthContext';
 
-const API_URL = 'http://localhost:3000';
+import './Login.scss';
 
 const Login = () => {
     const navigate = useNavigate();
+    const { login } = useAuth();
 
-    const [email, setEmail] = useState('');
+    const [email, setEmail] =
+        useState('');
     const [password, setPassword] =
         useState('');
     const [rememberMe, setRememberMe] =
@@ -42,37 +45,41 @@ const Login = () => {
         setIsLoading(true);
 
         try {
-            const response = await axios.post(
-                `${API_URL}/auth/login`,
-                {
-                    email,
-                    password,
-                },
-            );
+            const response =
+                await api.post(
+                    '/auth/login',
+                    {
+                        email,
+                        password,
+                    },
+                );
 
             const token =
                 response.data.access_token;
 
-            const storage = rememberMe
-                ? localStorage
-                : sessionStorage;
-
-            storage.setItem(
-                'accessToken',
+            login(
                 token,
+                rememberMe,
             );
 
-            navigate('/');
+            navigate('/profile');
         } catch (requestError) {
             if (
                 axios.isAxiosError(
                     requestError,
                 )
             ) {
+                const message =
+                    requestError.response
+                        ?.data?.message;
+
                 setError(
-                    requestError.response?.data
-                        ?.message ||
-                        'Invalid email or password.',
+                    Array.isArray(message)
+                        ? message.join(
+                              ', ',
+                          )
+                        : message ||
+                          'Invalid email or password.',
                 );
             } else {
                 setError(
@@ -86,28 +93,7 @@ const Login = () => {
 
     return (
         <main className="login">
-            <section className="login__top">
-                <div className="login__top-content" />
-
-                <svg
-                    className="login__wave"
-                    viewBox="0 0 1440 260"
-                    preserveAspectRatio="none"
-                    aria-hidden="true"
-                >
-                    <path
-                        d="
-                            M0 170
-                            C180 150 300 205 480 185
-                            C675 164 790 72 965 92
-                            C1135 112 1240 178 1440 118
-                            L1440 260
-                            L0 260
-                            Z
-                        "
-                    />
-                </svg>
-            </section>
+            <section className="login__top" />
 
             <section className="login__content">
                 <div className="login__container">
@@ -123,7 +109,9 @@ const Login = () => {
 
                     <form
                         className="login__form"
-                        onSubmit={handleSubmit}
+                        onSubmit={
+                            handleSubmit
+                        }
                     >
                         <div className="login__field">
                             <label htmlFor="email">
@@ -132,13 +120,16 @@ const Login = () => {
 
                             <input
                                 id="email"
-                                name="email"
                                 type="email"
                                 placeholder="myemail@email.com"
                                 value={email}
-                                onChange={(event) =>
+                                onChange={(
+                                    event,
+                                ) =>
                                     setEmail(
-                                        event.target.value,
+                                        event
+                                            .target
+                                            .value,
                                     )
                                 }
                                 required
@@ -154,17 +145,22 @@ const Login = () => {
                             <div className="login__password">
                                 <input
                                     id="password"
-                                    name="password"
                                     type={
                                         showPassword
                                             ? 'text'
                                             : 'password'
                                     }
                                     placeholder="enter your password"
-                                    value={password}
-                                    onChange={(event) =>
+                                    value={
+                                        password
+                                    }
+                                    onChange={(
+                                        event,
+                                    ) =>
                                         setPassword(
-                                            event.target.value,
+                                            event
+                                                .target
+                                                .value,
                                         )
                                     }
                                     required
@@ -190,11 +186,15 @@ const Login = () => {
                                 >
                                     {showPassword ? (
                                         <EyeOff
-                                            size={18}
+                                            size={
+                                                18
+                                            }
                                         />
                                     ) : (
                                         <Eye
-                                            size={18}
+                                            size={
+                                                18
+                                            }
                                         />
                                     )}
                                 </button>
@@ -205,17 +205,26 @@ const Login = () => {
                             <label className="login__remember">
                                 <input
                                     type="checkbox"
-                                    checked={rememberMe}
-                                    onChange={(event) =>
+                                    checked={
+                                        rememberMe
+                                    }
+                                    onChange={(
+                                        event,
+                                    ) =>
                                         setRememberMe(
-                                            event.target
+                                            event
+                                                .target
                                                 .checked,
                                         )
                                     }
                                 />
 
                                 <span className="login__checkbox">
-                                    <Check size={12} />
+                                    <Check
+                                        size={
+                                            12
+                                        }
+                                    />
                                 </span>
 
                                 <span>
@@ -240,7 +249,9 @@ const Login = () => {
                         <button
                             className="login__submit"
                             type="submit"
-                            disabled={isLoading}
+                            disabled={
+                                isLoading
+                            }
                         >
                             <span>
                                 {isLoading
@@ -250,7 +261,9 @@ const Login = () => {
 
                             {!isLoading && (
                                 <ArrowRight
-                                    size={18}
+                                    size={
+                                        18
+                                    }
                                 />
                             )}
                         </button>

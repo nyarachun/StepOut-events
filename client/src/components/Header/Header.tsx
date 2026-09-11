@@ -10,9 +10,16 @@ import {
     UserRound,
     X,
 } from 'lucide-react';
-import { useState, type ChangeEvent } from 'react';
-import { useNavigate } from 'react-router-dom';
+import {
+    useState,
+    type ChangeEvent,
+} from 'react';
+import {
+    Link,
+    useNavigate,
+} from 'react-router-dom';
 
+import { useAuth } from '../../context/AuthContext';
 import { useCity } from '../../context/CityContext';
 import { useTheme } from '../../context/ThemeContext';
 import { BurgerMenu } from '../BurgerMenu/BurgerMenu';
@@ -20,8 +27,11 @@ import { BurgerMenu } from '../BurgerMenu/BurgerMenu';
 import './Header.scss';
 
 export const Header = () => {
-    const [isCityOpen, setIsCityOpen] = useState(false);
-    const [isBurgerOpen, setIsBurgerOpen] = useState(false);
+    const [isCityOpen, setIsCityOpen] =
+        useState(false);
+
+    const [isBurgerOpen, setIsBurgerOpen] =
+        useState(false);
 
     const {
         cities,
@@ -34,13 +44,20 @@ export const Header = () => {
         toggleTheme,
     } = useTheme();
 
+    const {
+        isAuthenticated,
+    } = useAuth();
+
     const navigate = useNavigate();
 
     const unreadMessages = 2;
 
-    const handleCitySelect = (cityId: number) => {
+    const handleCitySelect = (
+        cityId: number,
+    ) => {
         const city = cities.find(
-            (item) => item.id === cityId,
+            (item) =>
+                item.id === cityId,
         );
 
         if (!city) {
@@ -54,38 +71,57 @@ export const Header = () => {
     const handleSearch = (
         event: ChangeEvent<HTMLInputElement>,
     ) => {
-        const search = event.target.value.trimStart();
+        const search =
+            event.target.value.trimStart();
 
         navigate(
             search
-                ? `/events?search=${encodeURIComponent(search)}`
+                ? `/events?search=${encodeURIComponent(
+                      search,
+                  )}`
                 : '/events',
         );
+    };
+
+    const handleProfileClick = () => {
+        if (isAuthenticated) {
+            navigate('/profile');
+
+            return;
+        }
+
+        navigate('/login');
     };
 
     return (
         <>
             <header className="header">
                 <div className="header__container">
-                    <a
+                    <Link
                         className="header__logo"
-                        href="/StepOut-events/"
+                        to="/"
                     >
                         StepOut
-                    </a>
+                    </Link>
 
                     <div className="city-selector">
                         <button
                             className="city-selector__button"
                             type="button"
                             onClick={() =>
-                                setIsCityOpen(!isCityOpen)
+                                setIsCityOpen(
+                                    (
+                                        current,
+                                    ) =>
+                                        !current,
+                                )
                             }
                         >
                             <MapPin size={19} />
 
                             <span>
-                                {selectedCity?.name || 'Lviv'}
+                                {selectedCity?.name ||
+                                    'Lviv'}
                             </span>
 
                             <ChevronDown
@@ -102,43 +138,63 @@ export const Header = () => {
                             <div className="city-selector__dropdown">
                                 <div className="city-selector__header">
                                     <span>
-                                        Choose your city
+                                        Choose your
+                                        city
                                     </span>
 
                                     <button
                                         type="button"
                                         onClick={() =>
-                                            setIsCityOpen(false)
+                                            setIsCityOpen(
+                                                false,
+                                            )
                                         }
                                         aria-label="Close city selector"
                                     >
-                                        <X size={17} />
+                                        <X
+                                            size={
+                                                17
+                                            }
+                                        />
                                     </button>
                                 </div>
 
                                 <div className="city-selector__list">
-                                    {cities.map((city) => (
-                                        <button
-                                            className={
-                                                city.id === selectedCity?.id
-                                                    ? 'city-selector__city city-selector__city--selected'
-                                                    : 'city-selector__city'
-                                            }
-                                            key={city.id}
-                                            type="button"
-                                            onClick={() =>
-                                                handleCitySelect(
-                                                    city.id,
-                                                )
-                                            }
-                                        >
-                                            <MapPin size={17} />
+                                    {cities.map(
+                                        (
+                                            city,
+                                        ) => (
+                                            <button
+                                                className={
+                                                    city.id ===
+                                                    selectedCity?.id
+                                                        ? 'city-selector__city city-selector__city--selected'
+                                                        : 'city-selector__city'
+                                                }
+                                                key={
+                                                    city.id
+                                                }
+                                                type="button"
+                                                onClick={() =>
+                                                    handleCitySelect(
+                                                        city.id,
+                                                    )
+                                                }
+                                            >
+                                                <MapPin
+                                                    size={
+                                                        17
+                                                    }
+                                                />
 
-                                            <span>
-                                                {city.name}
-                                            </span>
-                                        </button>
-                                    ))}
+                                                <span>
+                                                    {
+                                                        city.name
+                                                    }
+                                                </span>
+                                            </button>
+                                        ),
+                                    )}
                                 </div>
                             </div>
                         )}
@@ -150,83 +206,118 @@ export const Header = () => {
                         <input
                             type="search"
                             placeholder="Search events..."
-                            onChange={handleSearch}
+                            onChange={
+                                handleSearch
+                            }
                         />
                     </div>
 
                     <nav className="header__navigation">
-                        <a
+                        <Link
                             className="header__icon-link"
-                            href="StepOut-events/#//favorites"
+                            to="/favorites"
                             aria-label="Favorites"
                         >
-                            <Heart size={21} />
-                        </a>
+                            <Heart
+                                size={21}
+                            />
+                        </Link>
 
-                        <a
+                        <Link
                             className="header__icon-link"
-                            href="/messages"
+                            to="/messages"
                             aria-label="Messages"
                         >
-                            <MessageCircle size={21} />
+                            <MessageCircle
+                                size={21}
+                            />
 
-                            {unreadMessages > 0 && (
+                            {unreadMessages >
+                                0 && (
                                 <span className="header__badge">
-                                    {unreadMessages}
+                                    {
+                                        unreadMessages
+                                    }
                                 </span>
                             )}
-                        </a>
+                        </Link>
 
-                        <a
+                        <Link
                             className="header__events-link"
-                            href="/my-events"
+                            to="/my-events"
                         >
-                            <span>My events</span>
-                        </a>
+                            <span>
+                                My events
+                            </span>
+                        </Link>
                     </nav>
 
                     <button
                         className="theme-switch"
                         type="button"
-                        onClick={toggleTheme}
+                        onClick={
+                            toggleTheme
+                        }
                         aria-label="Change theme"
                     >
                         <span
                             className={
-                                theme === 'light'
+                                theme ===
+                                'light'
                                     ? 'theme-switch__slider theme-switch__slider--light'
                                     : 'theme-switch__slider'
                             }
                         >
-                            {theme === 'dark' ? (
-                                <Moon size={15} />
+                            {theme ===
+                            'dark' ? (
+                                <Moon
+                                    size={
+                                        15
+                                    }
+                                />
                             ) : (
-                                <Sun size={15} />
+                                <Sun
+                                    size={
+                                        15
+                                    }
+                                />
                             )}
                         </span>
                     </button>
 
-                    <a
+                    <button
                         className="header__profile"
-                        href="/profile"
+                        type="button"
+                        onClick={
+                            handleProfileClick
+                        }
                         aria-label="Profile"
                     >
-                        <UserRound size={20} />
-                    </a>
+                        <UserRound
+                            size={20}
+                        />
+                    </button>
 
                     <button
                         className="header__menu-button"
                         type="button"
                         onClick={() =>
-                            setIsBurgerOpen(true)
+                            setIsBurgerOpen(
+                                true,
+                            )
                         }
                         aria-label="Open menu"
                     >
-                        <Menu size={23} />
+                        <Menu
+                            size={23}
+                        />
 
-                        {unreadMessages > 0 && (
+                        {unreadMessages >
+                            0 && (
                             <span className="header__menu-badge">
-                                {unreadMessages}
+                                {
+                                    unreadMessages
+                                }
                             </span>
                         )}
                     </button>
@@ -234,9 +325,13 @@ export const Header = () => {
             </header>
 
             <BurgerMenu
-                isOpen={isBurgerOpen}
+                isOpen={
+                    isBurgerOpen
+                }
                 onClose={() =>
-                    setIsBurgerOpen(false)
+                    setIsBurgerOpen(
+                        false,
+                    )
                 }
             />
         </>
