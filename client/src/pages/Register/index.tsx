@@ -1,9 +1,9 @@
+import axios from 'axios';
 import {
     ArrowRight,
     Eye,
     EyeOff,
 } from 'lucide-react';
-import axios from 'axios';
 import {
     useState,
     type FormEvent,
@@ -14,28 +14,42 @@ import {
 } from 'react-router-dom';
 
 import { api } from '../../api/api';
+import { useTheme } from '../../context/ThemeContext';
 
 import './Register.scss';
 
 const Register = () => {
     const navigate = useNavigate();
+    const { theme } = useTheme();
 
-    const [name, setName] =
-        useState('');
-    const [email, setEmail] =
-        useState('');
+    const [name, setName] = useState('');
+    const [email, setEmail] = useState('');
     const [password, setPassword] =
         useState('');
+    const [confirmPassword, setConfirmPassword] =
+        useState('');
+
     const [role, setRole] =
-        useState<'user' | 'organizer'>(
-            'user',
-        );
+        useState<'user' | 'organizer'>('user');
+
     const [showPassword, setShowPassword] =
         useState(false);
-    const [isLoading, setIsLoading] =
-        useState(false);
+
+    const [
+        showConfirmPassword,
+        setShowConfirmPassword,
+    ] = useState(false);
+
     const [error, setError] =
         useState('');
+
+    const [isLoading, setIsLoading] =
+        useState(false);
+
+    const backgroundImage =
+        theme === 'dark'
+            ? `${import.meta.env.BASE_URL}images/background-dark.svg`
+            : `${import.meta.env.BASE_URL}images/background.svg`;
 
     const handleSubmit = async (
         event: FormEvent<HTMLFormElement>,
@@ -43,41 +57,61 @@ const Register = () => {
         event.preventDefault();
 
         setError('');
+
+        if (password !== confirmPassword) {
+            setError(
+                'Passwords do not match.',
+            );
+
+            return;
+        }
+
+        if (password.length < 8) {
+            setError(
+                'Password must contain at least 8 characters.',
+            );
+
+            return;
+        }
+
         setIsLoading(true);
 
         try {
-            await api.post(
-                '/auth/register',
-                {
-                    name,
-                    email,
-                    password,
-                    role,
-                },
-            );
+            await api.post('/auth/register', {
+                name,
+                email,
+                password,
+                role,
+            });
 
-            navigate('/login');
+            navigate('/verify-email', {
+                state: {
+                    email,
+                },
+            });
         } catch (requestError) {
             if (
                 axios.isAxiosError(
                     requestError,
                 )
             ) {
-                const message =
+                const errorMessage =
                     requestError.response
                         ?.data?.message;
 
                 setError(
-                    Array.isArray(message)
-                        ? message.join(
+                    Array.isArray(
+                        errorMessage,
+                    )
+                        ? errorMessage.join(
                               ', ',
                           )
-                        : message ||
+                        : errorMessage ||
                           'Registration failed.',
                 );
             } else {
                 setError(
-                    'Something went wrong. Please try again.',
+                    'Registration failed.',
                 );
             }
         } finally {
@@ -86,35 +120,42 @@ const Register = () => {
     };
 
     return (
-        <main className="register">
-            <section className="register__top" />
+        <main
+            className="register-page"
+            style={{
+                backgroundImage: `url("${backgroundImage}")`,
+            }}
+        >
+            <section className="register-page__content">
+                <div className="register-page__container">
+                    <Link
+                        to="/login"
+                        className="register-page__back"
+                    >
+                        ← Back to sign in
+                    </Link>
 
-            <section className="register__content">
-                <div className="register__container">
-                    <div className="register__heading">
-                        <span className="register__eyebrow">
-                            JOIN STEPOUT
-                        </span>
+                    <span className="register-page__eyebrow">
+                        STEP INTO SOMETHING NEW
+                    </span>
 
-                        <h1 className="register__title">
-                            Create account
-                        </h1>
+                    <h1 className="register-page__title">
+                        Create your account
+                    </h1>
 
-                        <p className="register__description">
-                            Discover events, meet
-                            people and find
-                            something worth
-                            stepping out for.
-                        </p>
-                    </div>
+                    <p className="register-page__description">
+                        Join StepOut and discover
+                        events, people and
+                        experiences in your city.
+                    </p>
 
                     <form
-                        className="register__form"
+                        className="register-page__form"
                         onSubmit={
                             handleSubmit
                         }
                     >
-                        <div className="register__field">
+                        <div className="register-page__field">
                             <label htmlFor="name">
                                 Name
                             </label>
@@ -122,23 +163,21 @@ const Register = () => {
                             <input
                                 id="name"
                                 type="text"
-                                placeholder="Your name"
                                 value={name}
                                 onChange={(
                                     event,
                                 ) =>
                                     setName(
-                                        event
-                                            .target
+                                        event.target
                                             .value,
                                     )
                                 }
+                                placeholder="Your name"
                                 required
-                                autoComplete="name"
                             />
                         </div>
 
-                        <div className="register__field">
+                        <div className="register-page__field">
                             <label htmlFor="email">
                                 Email
                             </label>
@@ -146,28 +185,55 @@ const Register = () => {
                             <input
                                 id="email"
                                 type="email"
-                                placeholder="myemail@email.com"
                                 value={email}
                                 onChange={(
                                     event,
                                 ) =>
                                     setEmail(
-                                        event
-                                            .target
+                                        event.target
                                             .value,
                                     )
                                 }
+                                placeholder="you@example.com"
                                 required
-                                autoComplete="email"
                             />
                         </div>
 
-                        <div className="register__field">
+                        <div className="register-page__field">
+                            <label htmlFor="role">
+                                Account type
+                            </label>
+
+                            <select
+                                id="role"
+                                value={role}
+                                onChange={(
+                                    event,
+                                ) =>
+                                    setRole(
+                                        event.target
+                                            .value as
+                                            | 'user'
+                                            | 'organizer',
+                                    )
+                                }
+                            >
+                                <option value="user">
+                                    User
+                                </option>
+
+                                <option value="organizer">
+                                    Organizer
+                                </option>
+                            </select>
+                        </div>
+
+                        <div className="register-page__field">
                             <label htmlFor="password">
                                 Password
                             </label>
 
-                            <div className="register__password">
+                            <div className="register-page__password">
                                 <input
                                     id="password"
                                     type={
@@ -175,7 +241,6 @@ const Register = () => {
                                             ? 'text'
                                             : 'password'
                                     }
-                                    placeholder="Create a password"
                                     value={
                                         password
                                     }
@@ -183,24 +248,22 @@ const Register = () => {
                                         event,
                                     ) =>
                                         setPassword(
-                                            event
-                                                .target
+                                            event.target
                                                 .value,
                                         )
                                     }
+                                    placeholder="At least 8 characters"
                                     required
-                                    autoComplete="new-password"
                                 />
 
                                 <button
-                                    className="register__password-toggle"
                                     type="button"
                                     onClick={() =>
                                         setShowPassword(
                                             (
-                                                current,
+                                                previous,
                                             ) =>
-                                                !current,
+                                                !previous,
                                         )
                                     }
                                     aria-label={
@@ -211,75 +274,85 @@ const Register = () => {
                                 >
                                     {showPassword ? (
                                         <EyeOff
-                                            size={
-                                                18
-                                            }
+                                            size={18}
                                         />
                                     ) : (
                                         <Eye
-                                            size={
-                                                18
-                                            }
+                                            size={18}
                                         />
                                     )}
                                 </button>
                             </div>
                         </div>
 
-                        <div className="register__role">
-                            <span>
-                                Account type
-                            </span>
+                        <div className="register-page__field">
+                            <label htmlFor="confirm-password">
+                                Confirm password
+                            </label>
 
-                            <div className="register__role-options">
-                                <button
-                                    className={
-                                        role ===
-                                        'user'
-                                            ? 'register__role-option register__role-option--active'
-                                            : 'register__role-option'
+                            <div className="register-page__password">
+                                <input
+                                    id="confirm-password"
+                                    type={
+                                        showConfirmPassword
+                                            ? 'text'
+                                            : 'password'
                                     }
-                                    type="button"
-                                    onClick={() =>
-                                        setRole(
-                                            'user',
+                                    value={
+                                        confirmPassword
+                                    }
+                                    onChange={(
+                                        event,
+                                    ) =>
+                                        setConfirmPassword(
+                                            event
+                                                .target
+                                                .value,
                                         )
                                     }
-                                >
-                                    User
-                                </button>
+                                    placeholder="Repeat your password"
+                                    required
+                                />
 
                                 <button
-                                    className={
-                                        role ===
-                                        'organizer'
-                                            ? 'register__role-option register__role-option--active'
-                                            : 'register__role-option'
-                                    }
                                     type="button"
                                     onClick={() =>
-                                        setRole(
-                                            'organizer',
+                                        setShowConfirmPassword(
+                                            (
+                                                previous,
+                                            ) =>
+                                                !previous,
                                         )
                                     }
+                                    aria-label={
+                                        showConfirmPassword
+                                            ? 'Hide password'
+                                            : 'Show password'
+                                    }
                                 >
-                                    Organizer
+                                    {showConfirmPassword ? (
+                                        <EyeOff
+                                            size={18}
+                                        />
+                                    ) : (
+                                        <Eye
+                                            size={18}
+                                        />
+                                    )}
                                 </button>
                             </div>
                         </div>
 
                         {error && (
-                            <p className="register__error">
+                            <p className="register-page__error">
                                 {error}
                             </p>
                         )}
 
                         <button
-                            className="register__submit"
+                            className="register-page__submit"
                             type="submit"
-                            disabled={
-                                isLoading
-                            }
+                            disabled={isLoading}
                         >
                             <span>
                                 {isLoading
@@ -289,19 +362,14 @@ const Register = () => {
 
                             {!isLoading && (
                                 <ArrowRight
-                                    size={
-                                        18
-                                    }
+                                    size={18}
                                 />
                             )}
                         </button>
                     </form>
 
-                    <p className="register__login">
-                        <span>
-                            Already have an Account?
-                        </span>
-
+                    <p className="register-page__login">
+                        Already have an account?{' '}
                         <Link to="/login">
                             Sign in
                         </Link>

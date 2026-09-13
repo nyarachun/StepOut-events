@@ -1,0 +1,249 @@
+.verify-email {
+    min-height: 100vh;
+
+    background-color: var(--page-background);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+
+    color: var(--text-primary);
+}
+
+.verify-email__content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    min-height: 100vh;
+
+    padding: 50px 24px;
+}
+
+.verify-email__container {
+    width: 100%;
+    max-width: 470px;
+
+    margin: 0 auto;
+}
+
+.verify-email__icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 58px;
+    height: 58px;
+
+    margin-bottom: 22px;
+
+    border-radius: 16px;
+
+    background: var(--accent-light);
+    color: var(--accent-color);
+}
+
+.verify-email__eyebrow {
+    color: var(--accent-color);
+
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.4px;
+}
+
+.verify-email__title {
+    margin: 10px 0 14px;
+
+    color: var(--text-primary);
+
+    font-size: 44px;
+    font-weight: 700;
+    line-height: 1.05;
+    letter-spacing: -1.5px;
+}
+
+.verify-email__description {
+    max-width: 410px;
+
+    margin: 0 0 34px;
+
+    color: var(--text-secondary);
+
+    font-size: 13px;
+    line-height: 1.8;
+}
+
+.verify-email__form {
+    display: flex;
+    flex-direction: column;
+
+    gap: 22px;
+}
+
+.verify-email__field {
+    display: flex;
+    flex-direction: column;
+
+    gap: 8px;
+
+    label {
+        color: var(--text-primary);
+
+        font-size: 11px;
+        font-weight: 600;
+    }
+
+    input {
+        width: 100%;
+        height: 46px;
+
+        padding: 0 12px;
+
+        border: 1px solid var(--border-color);
+        border-radius: 10px;
+
+        outline: 0;
+
+        background: var(--card-background);
+        color: var(--text-primary);
+
+        font-family: inherit;
+        font-size: 13px;
+
+        transition:
+            border-color 0.2s ease;
+
+        &:focus {
+            border-color: var(--accent-color);
+        }
+
+        &::placeholder {
+            color: var(--text-muted);
+        }
+    }
+}
+
+#code {
+    letter-spacing: 5px;
+
+    font-size: 20px;
+    font-weight: 700;
+    text-align: center;
+}
+
+.verify-email__error,
+.verify-email__success {
+    margin: -7px 0 0;
+
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+.verify-email__error {
+    color: #d14a6f;
+}
+
+.verify-email__success {
+    color: #35a36b;
+}
+
+.verify-email__submit {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 10px;
+
+    width: 100%;
+    height: 56px;
+
+    border: 0;
+    border-radius: 999px;
+
+    background: var(--accent-color);
+    color: #fff;
+
+    box-shadow:
+        0 10px 28px var(--shadow-color);
+
+    cursor: pointer;
+
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+
+    transition:
+        transform 0.2s ease,
+        opacity 0.2s ease;
+
+    &:hover:not(:disabled) {
+        transform: translateY(-2px);
+    }
+
+    &:disabled {
+        cursor: wait;
+        opacity: 0.7;
+    }
+}
+
+.verify-email__resend {
+    display: block;
+
+    margin: 20px auto 0;
+
+    padding: 0;
+
+    border: 0;
+
+    background: transparent;
+    color: var(--text-secondary);
+
+    cursor: pointer;
+
+    font-family: inherit;
+    font-size: 11px;
+    font-weight: 600;
+
+    &:hover:not(:disabled) {
+        color: var(--accent-color);
+    }
+
+    &:disabled {
+        cursor: wait;
+        opacity: 0.6;
+    }
+}
+
+.verify-email__back {
+    display: block;
+
+    width: fit-content;
+
+    margin: 16px auto 0;
+
+    color: var(--text-muted);
+
+    text-decoration: none;
+
+    font-size: 10px;
+
+    &:hover {
+        color: var(--accent-color);
+    }
+}
+
+@media (max-width: 600px) {
+    .verify-email__content {
+        align-items: flex-start;
+
+        padding: 70px 20px 40px;
+    }
+
+    .verify-email__title {
+        font-size: 36px;
+    }
+
+    .verify-email__description {
+        font-size: 12px;
+    }
+}

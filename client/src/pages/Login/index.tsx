@@ -11,30 +11,56 @@ import {
 } from 'react';
 import {
     Link,
+    useLocation,
     useNavigate,
 } from 'react-router-dom';
 
 import { api } from '../../api/api';
 import { useAuth } from '../../context/AuthContext';
+import { useTheme } from '../../context/ThemeContext';
 
 import './Login.scss';
 
+type LoginLocationState = {
+    email?: string;
+    verified?: boolean;
+};
+
 const Login = () => {
     const navigate = useNavigate();
-    const { login } = useAuth();
+    const location = useLocation();
 
-    const [email, setEmail] =
-        useState('');
+    const { login } = useAuth();
+    const { theme } = useTheme();
+
+    const locationState =
+        location.state as
+            | LoginLocationState
+            | null;
+
+    const [email, setEmail] = useState(
+        locationState?.email || '',
+    );
+
     const [password, setPassword] =
         useState('');
+
     const [rememberMe, setRememberMe] =
         useState(false);
+
     const [showPassword, setShowPassword] =
         useState(false);
+
     const [isLoading, setIsLoading] =
         useState(false);
+
     const [error, setError] =
         useState('');
+
+    const backgroundImage =
+        theme === 'dark'
+            ? `${import.meta.env.BASE_URL}images/background-dark.svg`
+            : `${import.meta.env.BASE_URL}images/background.svg`;
 
     const handleSubmit = async (
         event: FormEvent<HTMLFormElement>,
@@ -45,14 +71,13 @@ const Login = () => {
         setIsLoading(true);
 
         try {
-            const response =
-                await api.post(
-                    '/auth/login',
-                    {
-                        email,
-                        password,
-                    },
-                );
+            const response = await api.post(
+                '/auth/login',
+                {
+                    email,
+                    password,
+                },
+            );
 
             const token =
                 response.data.access_token;
@@ -75,9 +100,7 @@ const Login = () => {
 
                 setError(
                     Array.isArray(message)
-                        ? message.join(
-                              ', ',
-                          )
+                        ? message.join(', ')
                         : message ||
                           'Invalid email or password.',
                 );
@@ -92,9 +115,12 @@ const Login = () => {
     };
 
     return (
-        <main className="login">
-            <section className="login__top" />
-
+        <main
+            className="login"
+            style={{
+                backgroundImage: `url("${backgroundImage}")`,
+            }}
+        >
             <section className="login__content">
                 <div className="login__container">
                     <div className="login__heading">
@@ -107,11 +133,17 @@ const Login = () => {
                         </h1>
                     </div>
 
+                    {locationState?.verified && (
+                        <p className="login__success">
+                            Email verified
+                            successfully. You can
+                            now sign in.
+                        </p>
+                    )}
+
                     <form
                         className="login__form"
-                        onSubmit={
-                            handleSubmit
-                        }
+                        onSubmit={handleSubmit}
                     >
                         <div className="login__field">
                             <label htmlFor="email">
@@ -120,15 +152,13 @@ const Login = () => {
 
                             <input
                                 id="email"
+                                name="email"
                                 type="email"
                                 placeholder="myemail@email.com"
                                 value={email}
-                                onChange={(
-                                    event,
-                                ) =>
+                                onChange={(event) =>
                                     setEmail(
-                                        event
-                                            .target
+                                        event.target
                                             .value,
                                     )
                                 }
@@ -145,21 +175,17 @@ const Login = () => {
                             <div className="login__password">
                                 <input
                                     id="password"
+                                    name="password"
                                     type={
                                         showPassword
                                             ? 'text'
                                             : 'password'
                                     }
                                     placeholder="enter your password"
-                                    value={
-                                        password
-                                    }
-                                    onChange={(
-                                        event,
-                                    ) =>
+                                    value={password}
+                                    onChange={(event) =>
                                         setPassword(
-                                            event
-                                                .target
+                                            event.target
                                                 .value,
                                         )
                                     }
@@ -172,9 +198,7 @@ const Login = () => {
                                     type="button"
                                     onClick={() =>
                                         setShowPassword(
-                                            (
-                                                current,
-                                            ) =>
+                                            (current) =>
                                                 !current,
                                         )
                                     }
@@ -186,15 +210,11 @@ const Login = () => {
                                 >
                                     {showPassword ? (
                                         <EyeOff
-                                            size={
-                                                18
-                                            }
+                                            size={18}
                                         />
                                     ) : (
                                         <Eye
-                                            size={
-                                                18
-                                            }
+                                            size={18}
                                         />
                                     )}
                                 </button>
@@ -205,9 +225,7 @@ const Login = () => {
                             <label className="login__remember">
                                 <input
                                     type="checkbox"
-                                    checked={
-                                        rememberMe
-                                    }
+                                    checked={rememberMe}
                                     onChange={(
                                         event,
                                     ) =>
@@ -220,11 +238,7 @@ const Login = () => {
                                 />
 
                                 <span className="login__checkbox">
-                                    <Check
-                                        size={
-                                            12
-                                        }
-                                    />
+                                    <Check size={12} />
                                 </span>
 
                                 <span>
@@ -249,9 +263,7 @@ const Login = () => {
                         <button
                             className="login__submit"
                             type="submit"
-                            disabled={
-                                isLoading
-                            }
+                            disabled={isLoading}
                         >
                             <span>
                                 {isLoading
@@ -260,11 +272,7 @@ const Login = () => {
                             </span>
 
                             {!isLoading && (
-                                <ArrowRight
-                                    size={
-                                        18
-                                    }
-                                />
+                                <ArrowRight size={18} />
                             )}
                         </button>
                     </form>

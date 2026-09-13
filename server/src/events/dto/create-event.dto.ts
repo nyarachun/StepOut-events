@@ -1,40 +1,42 @@
 import {
-  IsInt,
-  IsNumber,
-  IsOptional,
-  IsString,
-  Min,
-  IsDateString,
+    IsInt,
+    IsNumber,
+    IsOptional,
+    IsString,
+    IsUrl,
+    Min,
 } from 'class-validator';
 
 export class CreateEventDto {
-  @IsString()
-  title: string;
+    @IsString()
+    title: string;
 
-  @IsString()
-  description: string;
+    @IsString()
+    description: string;
 
-  @IsDateString()
-  date: string;
+    @IsString()
+    date: string;
 
-  @IsString()
-  address: string;
+    @IsString()
+    address: string;
 
-  @IsNumber()
-  @Min(0)
-  price: number;
+    @IsNumber()
+    @Min(0)
+    price: number;
 
-  @IsInt()
-  @Min(1)
-  capacity: number;
+    @IsInt()
+    @Min(1)
+    capacity: number;
 
-  @IsOptional()
-  @IsString()
-  imageUrl?: string;
+    @IsOptional()
+    @IsUrl()
+    imageUrl?: string;
 
-  @IsInt()
-  categoryId: number;
+    @IsInt()
+    @Min(1)
+    categoryId: number;
 
-  @IsInt()
-  cityId: number;
+    @IsInt()
+    @Min(1)
+    cityId: number;
 }

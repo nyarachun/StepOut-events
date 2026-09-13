@@ -34,4 +34,16 @@ export class User {
 
   @CreateDateColumn()
   createdAt: Date;
+
+  @Column({ nullable: true })
+  avatarUrl: string;
+
+  @Column('text', { nullable: true })
+  bio: string;
+
+  @Column('text', {
+    array: true,
+    default: () => "'{}'",
+  })
+  interests: string[];
 }

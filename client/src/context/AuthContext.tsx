@@ -1,17 +1,35 @@
 import {
     createContext,
     useContext,
+    useEffect,
     useState,
     type ReactNode,
 } from 'react';
 
+import { api } from '../api/api';
+
+export type UserRole =
+    | 'user'
+    | 'organizer'
+    | 'admin';
+
+export type CurrentUser = {
+    id: number;
+    name: string;
+    email: string;
+    role: UserRole;
+};
+
 type AuthContextType = {
     isAuthenticated: boolean;
+    user: CurrentUser | null;
+    isLoading: boolean;
     login: (
         token: string,
         rememberMe: boolean,
     ) => void;
     logout: () => void;
+    refreshUser: () => Promise<void>;
 };
 
 const AuthContext =
@@ -37,12 +55,63 @@ const getStoredToken = () => {
 export const AuthProvider = ({
     children,
 }: AuthProviderProps) => {
-    const [
-        isAuthenticated,
-        setIsAuthenticated,
-    ] = useState(() =>
-        Boolean(getStoredToken()),
-    );
+    const [isAuthenticated, setIsAuthenticated] =
+        useState(() =>
+            Boolean(getStoredToken()),
+        );
+
+    const [user, setUser] =
+        useState<CurrentUser | null>(
+            null,
+        );
+
+    const [isLoading, setIsLoading] =
+        useState(true);
+
+    const refreshUser =
+        async () => {
+            const token =
+                getStoredToken();
+
+            if (!token) {
+                setUser(null);
+                setIsAuthenticated(false);
+                setIsLoading(false);
+
+                return;
+            }
+
+            try {
+                const response =
+                    await api.get<CurrentUser>(
+                        '/users/me',
+                    );
+
+                setUser(
+                    response.data,
+                );
+
+                setIsAuthenticated(true);
+            } catch {
+                localStorage.removeItem(
+                    'accessToken',
+                );
+
+                sessionStorage.removeItem(
+                    'accessToken',
+                );
+
+                setUser(null);
+                setIsAuthenticated(false);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+    useEffect(() => {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
+        refreshUser();
+    }, []);
 
     const login = (
         token: string,
@@ -66,6 +135,8 @@ export const AuthProvider = ({
         );
 
         setIsAuthenticated(true);
+
+        void refreshUser();
     };
 
     const logout = () => {
@@ -77,6 +148,7 @@ export const AuthProvider = ({
             'accessToken',
         );
 
+        setUser(null);
         setIsAuthenticated(false);
     };
 
@@ -84,8 +156,11 @@ export const AuthProvider = ({
         <AuthContext.Provider
             value={{
                 isAuthenticated,
+                user,
+                isLoading,
                 login,
                 logout,
+                refreshUser,
             }}
         >
             {children}
