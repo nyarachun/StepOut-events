@@ -76,63 +76,6 @@
     font-size: 13px;
 }
 
-.event-details__favorite {
-    position: absolute;
-    top: 16px;
-    right: 16px;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    width: 44px;
-    height: 44px;
-
-    padding: 0;
-
-    border: 1px solid var(--event-favorite-border);
-    border-radius: 50%;
-
-    background: var(--event-favorite-background);
-    color: var(--event-favorite-color);
-
-    cursor: pointer;
-
-    transition:
-        border-color 0.2s ease,
-        background 0.2s ease,
-        color 0.2s ease;
-
-    &:hover:not(:disabled) {
-        border-color: var(--accent-color);
-
-        background: var(--event-favorite-hover-background);
-
-        color: var(--accent-color);
-    }
-
-    &:disabled {
-        cursor: wait;
-        opacity: 0.7;
-    }
-
-    &--active {
-        border-color: var(--accent-color);
-
-        background: var(--accent-color);
-
-        color: #fff;
-    }
-
-    &--active:hover:not(:disabled) {
-        border-color: var(--accent-color);
-
-        background: var(--accent-color);
-
-        color: #fff;
-    }
-}
-
 .event-details__main {
     padding-top: 8px;
 }
@@ -501,14 +444,6 @@
         height: 340px;
 
         border-radius: 16px;
-    }
-
-    .event-details__favorite {
-        top: 12px;
-        right: 12px;
-
-        width: 40px;
-        height: 40px;
     }
 
     .event-details__eyebrow-row {

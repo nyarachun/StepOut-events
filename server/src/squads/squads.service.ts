@@ -97,6 +97,12 @@ export class SquadsService {
             );
         }
 
+        if (dto.groupSizeMin < 2) {
+            throw new BadRequestException(
+                'Minimum group size must be at least 2 participants',
+            );
+        }
+
         const existingMember =
             await this.squadMemberRepository.findOne(
                 {
@@ -159,7 +165,7 @@ export class SquadsService {
                         return false;
                     }
 
-                    return this.hasInterestOverlap(
+                    return this.hasSameInterests(
                         squad.interests,
                         dto.interests,
                     );
@@ -339,15 +345,23 @@ export class SquadsService {
         return savedChat;
     }
 
-    private hasInterestOverlap(
+    private hasSameInterests(
         first: string[],
         second: string[],
     ) {
-        return first.some(
-            (interest) =>
-                second.includes(
-                    interest,
-                ),
+        const normalize = (interests: string[]) =>
+            [...new Set(
+                interests.map((interest) => interest.trim().toLowerCase()),
+            )].sort();
+
+        const normalizedFirst = normalize(first);
+        const normalizedSecond = normalize(second);
+
+        return (
+            normalizedFirst.length === normalizedSecond.length &&
+            normalizedFirst.every(
+                (interest, index) => interest === normalizedSecond[index],
+            )
         );
     }
 }

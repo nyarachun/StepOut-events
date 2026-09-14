@@ -3,7 +3,6 @@ import {
     ArrowLeft,
     Ban,
     CalendarDays,
-    Heart,
     MapPin,
     MessageCircle,
     Users,
@@ -99,9 +98,6 @@ const EventDetails = () => {
 
     const [error, setError] =
         useState('');
-
-    const [isFavorite, setIsFavorite] =
-        useState(false);
 
     const [isBanModalOpen, setIsBanModalOpen] =
         useState(false);
@@ -311,56 +307,6 @@ const EventDetails = () => {
             }
         };
 
-    const handleFavorite =
-        async () => {
-            if (!event) {
-                return;
-            }
-
-            if (!isAuthenticated) {
-                navigate('/login');
-
-                return;
-            }
-
-            try {
-                if (isFavorite) {
-                    await api.delete(
-                        `/favorites/${event.id}`,
-                    );
-
-                    setIsFavorite(false);
-
-                    return;
-                }
-
-                await api.post(
-                    '/favorites',
-                    {
-                        eventId:
-                            event.id,
-                    },
-                );
-
-                setIsFavorite(true);
-            } catch (requestError) {
-                if (
-                    axios.isAxiosError(
-                        requestError,
-                    )
-                ) {
-                    const message =
-                        requestError.response
-                            ?.data?.message;
-
-                    console.error(
-                        message ||
-                        'Could not update favorite.',
-                    );
-                }
-            }
-        };
-
     const handleBan = async () => {
         if (!event || user?.role !== 'admin') {
             return;
@@ -466,30 +412,6 @@ const EventDetails = () => {
                             </div>
                         )}
 
-                        <button
-                            className={`event-details__favorite ${isFavorite
-                                    ? 'is-active'
-                                    : ''
-                                }`}
-                            type="button"
-                            onClick={
-                                handleFavorite
-                            }
-                            aria-label={
-                                isFavorite
-                                    ? 'Remove from favorites'
-                                    : 'Add to favorites'
-                            }
-                        >
-                            <Heart
-                                size={20}
-                                fill={
-                                    isFavorite
-                                        ? 'currentColor'
-                                        : 'none'
-                                }
-                            />
-                        </button>
                     </div>
 
                     <div className="event-details__content">
