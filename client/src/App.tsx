@@ -3,7 +3,6 @@ import { Footer } from './components/Footer/Footer';
 import { Header } from './components/Header/Header';
 import { ProtectedRoute } from './components/ProtectedRoute/ProtectedRoute';
 import Achievements from './pages/Achievements';
-import Admin from './pages/Admin';
 import Chats from './pages/Chats';
 import CreateEvent from './pages/CreateEvent';
 import EditEvent from './pages/EditEvent';
@@ -93,7 +92,11 @@ const AppContent = () => {
 
           <Route
             path="/events/:id/register"
-            element={<EventRegistration />}
+            element={
+              <ProtectedRoute>
+                <EventRegistration />
+              </ProtectedRoute>
+            }
           />
 
           <Route
@@ -150,14 +153,6 @@ const AppContent = () => {
             }
           />
 
-          <Route
-            path="/admin"
-            element={
-              <ProtectedRoute>
-                <Admin />
-              </ProtectedRoute>
-            }
-          />
         </Routes>
       </main>
 

@@ -20,7 +20,7 @@ export const banEvent = async (
     data: BanEventData,
 ) => {
     const response =
-        await api.patch(
+        await api.post(
             `/admin/events/${eventId}/ban`,
             data,
         );

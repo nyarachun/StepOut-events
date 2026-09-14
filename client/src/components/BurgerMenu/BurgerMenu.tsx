@@ -3,7 +3,6 @@ import {
     ChevronRight,
     Heart,
     MessageCircle,
-    ShieldCheck,
     UserRound,
     Users,
     X,
@@ -12,7 +11,6 @@ import { createPortal } from 'react-dom';
 import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
-import { useAuth } from '../../context/AuthContext';
 import { useChat } from '../../context/useChat';
 
 import './BurgerMenu.scss';
@@ -26,7 +24,6 @@ export const BurgerMenu = ({
     isOpen,
     onClose,
 }: BurgerMenuProps) => {
-    const { user } = useAuth();
     const { unreadCount } = useChat();
 
     useEffect(() => {
@@ -192,32 +189,6 @@ export const BurgerMenu = ({
                         />
                     </Link>
 
-                    {user?.role ===
-                        'admin' && (
-                            <Link
-                                className="burger-menu__link burger-menu__link--admin"
-                                to="/admin"
-                                onClick={
-                                    onClose
-                                }
-                            >
-                                <span className="burger-menu__link-content">
-                                    <ShieldCheck
-                                        size={
-                                            22
-                                        }
-                                    />
-
-                                    <span>
-                                        Admin
-                                    </span>
-                                </span>
-
-                                <ChevronRight
-                                    size={20}
-                                />
-                            </Link>
-                        )}
                 </nav>
             </div>
         </div>

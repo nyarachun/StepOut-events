@@ -57,6 +57,18 @@ const EventRegistration = () => {
         setIsRegistering,
     ] = useState(false);
 
+    const [cardNumber, setCardNumber] =
+        useState('');
+
+    const [cardholderName, setCardholderName] =
+        useState('');
+
+    const [expiry, setExpiry] =
+        useState('');
+
+    const [cvv, setCvv] =
+        useState('');
+
     const [error, setError] =
         useState('');
 
@@ -97,6 +109,24 @@ const EventRegistration = () => {
             }
 
             setError('');
+
+            if (Number(event.price) > 0) {
+                const normalizedCard = cardNumber.replace(/\s/g, '');
+
+                if (
+                    !/^\d{16}$/.test(normalizedCard) ||
+                    !/^\d{2}\/\d{2}$/.test(expiry) ||
+                    !/^\d{3,4}$/.test(cvv) ||
+                    cardholderName.trim().length < 2
+                ) {
+                    setError(
+                        'Enter valid mock payment details to continue.',
+                    );
+
+                    return;
+                }
+            }
+
             setIsRegistering(true);
 
             try {
@@ -111,7 +141,7 @@ const EventRegistration = () => {
                     },
                 );
             } catch (
-                requestError
+            requestError
             ) {
                 if (
                     axios.isAxiosError(
@@ -128,10 +158,10 @@ const EventRegistration = () => {
                             message,
                         )
                             ? message.join(
-                                  ', ',
-                              )
+                                ', ',
+                            )
                             : message ||
-                              'Could not register for this event.',
+                            'Could not register for this event.',
                     );
                 } else {
                     setError(
@@ -184,8 +214,8 @@ const EventRegistration = () => {
     const availableSpots =
         event.availableSpots ??
         event.capacity -
-            (event.registeredCount ??
-                0);
+        (event.registeredCount ??
+            0);
 
     const isSoldOut =
         availableSpots <= 0;
@@ -295,6 +325,83 @@ const EventRegistration = () => {
                                 : `${event.price} UAH`}
                         </div>
 
+                        {Number(event.price) > 0 && (
+                            <div className="event-registration__payment">
+                                <div className="event-registration__payment-heading">
+                                    <span>MOCK PAYMENT</span>
+                                    <small>No real charge will be made</small>
+                                </div>
+
+                                <label>
+                                    Cardholder name
+                                    <input
+                                        value={cardholderName}
+                                        onChange={(currentEvent) =>
+                                            setCardholderName(currentEvent.target.value)
+                                        }
+                                        placeholder="Alex Morgan"
+                                        autoComplete="cc-name"
+                                    />
+                                </label>
+
+                                <label>
+                                    Card number
+                                    <input
+                                        value={cardNumber}
+                                        onChange={(currentEvent) =>
+                                            setCardNumber(
+                                                currentEvent.target.value
+                                                    .replace(/\D/g, '')
+                                                    .slice(0, 16)
+                                                    .replace(/(.{4})/g, '$1 ')
+                                                    .trim(),
+                                            )
+                                        }
+                                        placeholder="4242 4242 4242 4242"
+                                        inputMode="numeric"
+                                        autoComplete="cc-number"
+                                    />
+                                </label>
+
+                                <div className="event-registration__payment-row">
+                                    <label>
+                                        Expiry
+                                        <input
+                                            value={expiry}
+                                            onChange={(currentEvent) =>
+                                                setExpiry(
+                                                    currentEvent.target.value
+                                                        .replace(/\D/g, '')
+                                                        .slice(0, 4)
+                                                        .replace(/^(\d{2})(\d)/, '$1/$2'),
+                                                )
+                                            }
+                                            placeholder="MM/YY"
+                                            inputMode="numeric"
+                                            autoComplete="cc-exp"
+                                        />
+                                    </label>
+
+                                    <label>
+                                        CVV
+                                        <input
+                                            value={cvv}
+                                            onChange={(currentEvent) =>
+                                                setCvv(
+                                                    currentEvent.target.value
+                                                        .replace(/\D/g, '')
+                                                        .slice(0, 4),
+                                                )
+                                            }
+                                            placeholder="123"
+                                            inputMode="numeric"
+                                            autoComplete="cc-csc"
+                                        />
+                                    </label>
+                                </div>
+                            </div>
+                        )}
+
                         {error && (
                             <p className="event-registration__error">
                                 {error}
@@ -318,11 +425,10 @@ const EventRegistration = () => {
                                 'Event is full'
                             ) : (
                                 <>
-                                    <Check
-                                        size={18}
-                                    />
-                                    Confirm
-                                    registration
+                                    <Check size={18} />
+                                    {Number(event.price) > 0
+                                        ? 'Pay and register'
+                                        : 'Confirm registration'}
                                 </>
                             )}
                         </button>

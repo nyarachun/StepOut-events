@@ -6,7 +6,6 @@ import {
     MessageCircle,
     Moon,
     Search,
-    ShieldCheck,
     Sun,
     Users,
     UserRound,
@@ -47,10 +46,7 @@ export const Header = () => {
         toggleTheme,
     } = useTheme();
 
-    const {
-        isAuthenticated,
-        user,
-    } = useAuth();
+    const { isAuthenticated } = useAuth();
     const { unreadCount } = useChat();
 
     const navigate = useNavigate();
@@ -271,23 +267,6 @@ export const Header = () => {
                             </span>
                         </Link>
 
-                        {user?.role ===
-                            'admin' && (
-                                <Link
-                                    className="header__events-link header__admin-link"
-                                    to="/admin"
-                                >
-                                    <ShieldCheck
-                                        size={
-                                            16
-                                        }
-                                    />
-
-                                    <span>
-                                        Admin
-                                    </span>
-                                </Link>
-                            )}
                     </nav>
 
                     <button

@@ -1,0 +1,214 @@
+@use '../../styles/main' as *;
+
+.event-registration {
+    min-height: 100%;
+    padding: 48px 24px 80px;
+    background: var(--page-background);
+}
+
+.event-registration__container {
+    width: 100%;
+    max-width: 1080px;
+    margin: 0 auto;
+}
+
+.event-registration__back {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 24px;
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.event-registration__back:hover {
+    color: var(--accent-color);
+}
+
+.event-registration__card {
+    display: grid;
+    grid-template-columns: minmax(260px, 0.85fr) minmax(0, 1.15fr);
+    overflow: hidden;
+    border: 1px solid var(--border-color);
+    border-radius: 18px;
+    background: var(--card-background);
+}
+
+.event-registration__image {
+    min-height: 560px;
+    background: var(--hover-background);
+}
+
+.event-registration__image img,
+.event-registration__image>div {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    min-height: 560px;
+    object-fit: cover;
+    color: var(--text-muted);
+}
+
+.event-registration__content {
+    padding: 42px;
+}
+
+.event-registration__eyebrow,
+.event-registration__payment-heading span {
+    color: var(--accent-color);
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 1px;
+}
+
+.event-registration__content h1 {
+    margin: 12px 0 14px;
+    color: var(--text-primary);
+    font-size: clamp(30px, 4vw, 48px);
+    line-height: 1.08;
+}
+
+.event-registration__description {
+    margin: 0 0 24px;
+    color: var(--text-secondary);
+    font-size: 13px;
+    line-height: 1.75;
+}
+
+.event-registration__info {
+    display: grid;
+    gap: 13px;
+    padding: 20px 0;
+    border-top: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.event-registration__info>div {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--accent-color);
+    font-size: 12px;
+}
+
+.event-registration__price {
+    margin: 22px 0;
+    color: var(--text-primary);
+    font-size: 22px;
+    font-weight: 800;
+}
+
+.event-registration__payment {
+    display: grid;
+    gap: 13px;
+    margin: 20px 0;
+    padding: 18px;
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    background: var(--hover-background);
+}
+
+.event-registration__payment-heading {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.event-registration__payment-heading small {
+    color: var(--text-muted);
+    font-size: 10px;
+}
+
+.event-registration__payment label {
+    display: grid;
+    gap: 6px;
+    color: var(--text-secondary);
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.event-registration__payment input {
+    width: 100%;
+    height: 42px;
+    padding: 0 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    outline: 0;
+    background: var(--card-background);
+    color: var(--text-primary);
+    font: inherit;
+}
+
+.event-registration__payment input:focus {
+    border-color: var(--accent-color);
+}
+
+.event-registration__payment-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+.event-registration__error {
+    margin: 12px 0;
+    color: #d14a6f;
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+.event-registration__submit {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    min-height: 48px;
+    border: 0;
+    border-radius: 10px;
+    background: var(--accent-color);
+    color: #fff;
+    cursor: pointer;
+    font: inherit;
+    font-size: 12px;
+    font-weight: 800;
+}
+
+.event-registration__submit:hover:not(:disabled) {
+    opacity: 0.9;
+}
+
+.event-registration__submit:disabled {
+    cursor: not-allowed;
+    opacity: 0.55;
+}
+
+.event-registration__loading {
+    padding: 100px 20px;
+    color: var(--text-secondary);
+    text-align: center;
+}
+
+@media (max-width: 760px) {
+    .event-registration {
+        padding: 32px 16px 56px;
+    }
+
+    .event-registration__card {
+        grid-template-columns: 1fr;
+    }
+
+    .event-registration__image,
+    .event-registration__image img,
+    .event-registration__image>div {
+        min-height: 260px;
+        height: 260px;
+    }
+
+    .event-registration__content {
+        padding: 26px 20px 28px;
+    }
+}

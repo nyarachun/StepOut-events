@@ -1,6 +1,7 @@
 import axios from 'axios';
 import {
     ArrowLeft,
+    Ban,
     CalendarDays,
     Heart,
     MapPin,
@@ -18,6 +19,7 @@ import {
 } from 'react-router-dom';
 
 import { api } from '../../api/api';
+import { banEvent } from '../../api/admin';
 import {
     createEventChat,
 } from '../../api/chats';
@@ -101,6 +103,18 @@ const EventDetails = () => {
     const [isFavorite, setIsFavorite] =
         useState(false);
 
+    const [isBanModalOpen, setIsBanModalOpen] =
+        useState(false);
+
+    const [banReason, setBanReason] =
+        useState('');
+
+    const [isBanning, setIsBanning] =
+        useState(false);
+
+    const [banError, setBanError] =
+        useState('');
+
     useEffect(() => {
         const loadEvent = async () => {
             if (!id) {
@@ -130,10 +144,10 @@ const EventDetails = () => {
                     setError(
                         Array.isArray(message)
                             ? message.join(
-                                  ', ',
-                              )
+                                ', ',
+                            )
                             : message ||
-                              'Could not load event.',
+                            'Could not load event.',
                     );
                 } else {
                     setError(
@@ -188,9 +202,9 @@ const EventDetails = () => {
     const isOwnEvent =
         Boolean(
             user &&
-                event &&
-                user.id ===
-                    event.organizer.id,
+            event &&
+            user.id ===
+            event.organizer.id,
         );
 
     const handleRegisterClick =
@@ -280,10 +294,10 @@ const EventDetails = () => {
                     setQuestionError(
                         Array.isArray(message)
                             ? message.join(
-                                  ', ',
-                              )
+                                ', ',
+                            )
                             : message ||
-                              'Could not send your question.',
+                            'Could not send your question.',
                     );
                 } else {
                     setQuestionError(
@@ -312,7 +326,7 @@ const EventDetails = () => {
             try {
                 if (isFavorite) {
                     await api.delete(
-                        `/favorites/events/${event.id}`,
+                        `/favorites/${event.id}`,
                     );
 
                     setIsFavorite(false);
@@ -341,11 +355,47 @@ const EventDetails = () => {
 
                     console.error(
                         message ||
-                            'Could not update favorite.',
+                        'Could not update favorite.',
                     );
                 }
             }
         };
+
+    const handleBan = async () => {
+        if (!event || user?.role !== 'admin') {
+            return;
+        }
+
+        const reason = banReason.trim();
+
+        if (reason.length < 5) {
+            setBanError('Enter a reason of at least 5 characters.');
+
+            return;
+        }
+
+        setIsBanning(true);
+        setBanError('');
+
+        try {
+            await banEvent(event.id, { reason });
+            navigate('/events', { replace: true });
+        } catch (requestError) {
+            if (axios.isAxiosError(requestError)) {
+                const message = requestError.response?.data?.message;
+
+                setBanError(
+                    Array.isArray(message)
+                        ? message.join(', ')
+                        : message || 'Could not ban this event.',
+                );
+            } else {
+                setBanError('Could not ban this event.');
+            }
+        } finally {
+            setIsBanning(false);
+        }
+    };
 
     if (isLoading) {
         return (
@@ -417,11 +467,10 @@ const EventDetails = () => {
                         )}
 
                         <button
-                            className={`event-details__favorite ${
-                                isFavorite
+                            className={`event-details__favorite ${isFavorite
                                     ? 'is-active'
                                     : ''
-                            }`}
+                                }`}
                             type="button"
                             onClick={
                                 handleFavorite
@@ -591,7 +640,7 @@ const EventDetails = () => {
                                     {Number(
                                         event.price,
                                     ) ===
-                                    0
+                                        0
                                         ? 'Free'
                                         : `${event.price} UAH`}
                                 </strong>
@@ -612,13 +661,28 @@ const EventDetails = () => {
                                     {isCheckingRegistration
                                         ? 'Checking...'
                                         : isRegistered
-                                          ? 'Already registered'
-                                          : isSoldOut
-                                            ? 'Event is full'
-                                            : 'Register for event'}
+                                            ? 'Already registered'
+                                            : isSoldOut
+                                                ? 'Event is full'
+                                                : 'Register for event'}
                                 </button>
                             )}
                         </div>
+
+                        {user?.role === 'admin' && (
+                            <button
+                                className="event-details__ban-button"
+                                type="button"
+                                onClick={() => {
+                                    setBanReason('');
+                                    setBanError('');
+                                    setIsBanModalOpen(true);
+                                }}
+                            >
+                                <Ban size={17} />
+                                Ban event
+                            </button>
+                        )}
 
                         {!isOwnEvent && (
                             <div className="event-details__question">
@@ -690,6 +754,68 @@ const EventDetails = () => {
                         )}
                     </div>
                 </article>
+
+                {isBanModalOpen && (
+                    <div className="event-details__modal-overlay">
+                        <div
+                            className="event-details__modal"
+                            role="dialog"
+                            aria-modal="true"
+                            aria-labelledby="ban-event-title"
+                        >
+                            <span className="event-details__modal-eyebrow">
+                                ADMIN MODERATION
+                            </span>
+
+                            <h2 id="ban-event-title">
+                                Are you sure you want to ban this event?
+                            </h2>
+
+                            <p>
+                                The event will be removed and the reason will be sent automatically to the organizer.
+                            </p>
+
+                            <label className="event-details__modal-label">
+                                Reason
+                                <textarea
+                                    value={banReason}
+                                    onChange={(currentEvent) =>
+                                        setBanReason(currentEvent.target.value)
+                                    }
+                                    placeholder="Explain why this event violates the rules..."
+                                    rows={5}
+                                    maxLength={1000}
+                                />
+                            </label>
+
+                            {banError && (
+                                <p className="event-details__ban-error">
+                                    {banError}
+                                </p>
+                            )}
+
+                            <div className="event-details__modal-actions">
+                                <button
+                                    type="button"
+                                    className="event-details__modal-cancel"
+                                    onClick={() => setIsBanModalOpen(false)}
+                                    disabled={isBanning}
+                                >
+                                    Cancel
+                                </button>
+
+                                <button
+                                    type="button"
+                                    className="event-details__modal-confirm"
+                                    onClick={() => void handleBan()}
+                                    disabled={isBanning}
+                                >
+                                    {isBanning ? 'Banning...' : 'Yes, ban event'}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                )}
             </div>
         </main>
     );
