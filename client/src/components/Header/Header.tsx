@@ -6,7 +6,9 @@ import {
     MessageCircle,
     Moon,
     Search,
+    ShieldCheck,
     Sun,
+    Users,
     UserRound,
     X,
 } from 'lucide-react';
@@ -20,6 +22,7 @@ import {
 } from 'react-router-dom';
 
 import { useAuth } from '../../context/AuthContext';
+import { useChat } from '../../context/useChat';
 import { useCity } from '../../context/CityContext';
 import { useTheme } from '../../context/ThemeContext';
 import { BurgerMenu } from '../BurgerMenu/BurgerMenu';
@@ -46,11 +49,11 @@ export const Header = () => {
 
     const {
         isAuthenticated,
+        user,
     } = useAuth();
+    const { unreadCount } = useChat();
 
     const navigate = useNavigate();
-
-    const unreadMessages = 2;
 
     const handleCitySelect = (
         cityId: number,
@@ -77,8 +80,8 @@ export const Header = () => {
         navigate(
             search
                 ? `/events?search=${encodeURIComponent(
-                      search,
-                  )}`
+                    search,
+                )}`
                 : '/events',
         );
     };
@@ -117,7 +120,9 @@ export const Header = () => {
                                 )
                             }
                         >
-                            <MapPin size={19} />
+                            <MapPin
+                                size={19}
+                            />
 
                             <span>
                                 {selectedCity?.name ||
@@ -167,7 +172,7 @@ export const Header = () => {
                                             <button
                                                 className={
                                                     city.id ===
-                                                    selectedCity?.id
+                                                        selectedCity?.id
                                                         ? 'city-selector__city city-selector__city--selected'
                                                         : 'city-selector__city'
                                                 }
@@ -201,7 +206,9 @@ export const Header = () => {
                     </div>
 
                     <div className="header__search">
-                        <Search size={19} />
+                        <Search
+                            size={19}
+                        />
 
                         <input
                             type="search"
@@ -232,14 +239,14 @@ export const Header = () => {
                                 size={21}
                             />
 
-                            {unreadMessages >
+                            {unreadCount >
                                 0 && (
-                                <span className="header__badge">
-                                    {
-                                        unreadMessages
-                                    }
-                                </span>
-                            )}
+                                    <span className="header__badge">
+                                        {unreadCount > 99
+                                            ? '99+'
+                                            : unreadCount}
+                                    </span>
+                                )}
                         </Link>
 
                         <Link
@@ -250,6 +257,37 @@ export const Header = () => {
                                 My events
                             </span>
                         </Link>
+
+                        <Link
+                            className="header__events-link header__squads-link"
+                            to="/squads"
+                        >
+                            <Users
+                                size={17}
+                            />
+
+                            <span>
+                                Squads
+                            </span>
+                        </Link>
+
+                        {user?.role ===
+                            'admin' && (
+                                <Link
+                                    className="header__events-link header__admin-link"
+                                    to="/admin"
+                                >
+                                    <ShieldCheck
+                                        size={
+                                            16
+                                        }
+                                    />
+
+                                    <span>
+                                        Admin
+                                    </span>
+                                </Link>
+                            )}
                     </nav>
 
                     <button
@@ -263,13 +301,13 @@ export const Header = () => {
                         <span
                             className={
                                 theme ===
-                                'light'
+                                    'light'
                                     ? 'theme-switch__slider theme-switch__slider--light'
                                     : 'theme-switch__slider'
                             }
                         >
                             {theme ===
-                            'dark' ? (
+                                'dark' ? (
                                 <Moon
                                     size={
                                         15
@@ -312,14 +350,14 @@ export const Header = () => {
                             size={23}
                         />
 
-                        {unreadMessages >
+                        {unreadCount >
                             0 && (
-                            <span className="header__menu-badge">
-                                {
-                                    unreadMessages
-                                }
-                            </span>
-                        )}
+                                <span className="header__menu-badge">
+                                    {unreadCount > 99
+                                        ? '99+'
+                                        : unreadCount}
+                                </span>
+                            )}
                     </button>
                 </div>
             </header>

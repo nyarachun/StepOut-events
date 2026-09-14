@@ -3,12 +3,17 @@ import {
     ChevronRight,
     Heart,
     MessageCircle,
-    Settings,
+    ShieldCheck,
     UserRound,
+    Users,
     X,
 } from 'lucide-react';
 import { createPortal } from 'react-dom';
 import { useEffect } from 'react';
+import { Link } from 'react-router-dom';
+
+import { useAuth } from '../../context/AuthContext';
+import { useChat } from '../../context/useChat';
 
 import './BurgerMenu.scss';
 
@@ -21,15 +26,18 @@ export const BurgerMenu = ({
     isOpen,
     onClose,
 }: BurgerMenuProps) => {
-    const unreadMessages = 2;
+    const { user } = useAuth();
+    const { unreadCount } = useChat();
 
     useEffect(() => {
         if (isOpen) {
-            document.body.style.overflow = 'hidden';
+            document.body.style.overflow =
+                'hidden';
         }
 
         return () => {
-            document.body.style.overflow = '';
+            document.body.style.overflow =
+                '';
         };
     }, [isOpen]);
 
@@ -46,7 +54,9 @@ export const BurgerMenu = ({
         >
             <div className="burger-menu__panel">
                 <div className="burger-menu__header">
-                    <span>Menu</span>
+                    <span>
+                        Menu
+                    </span>
 
                     <button
                         className="burger-menu__close"
@@ -59,86 +69,162 @@ export const BurgerMenu = ({
                 </div>
 
                 <nav className="burger-menu__navigation">
-                    <a
+                    <Link
                         className="burger-menu__link"
-                        href="/favorites"
+                        to="/favorites"
                         onClick={onClose}
                     >
                         <span className="burger-menu__link-content">
                             <Heart size={22} />
 
-                            <span>Favorites</span>
-
+                            <span>
+                                Favorites
+                            </span>
                         </span>
 
-                        <ChevronRight size={20} />
-                    </a>
+                        <ChevronRight
+                            size={20}
+                        />
+                    </Link>
 
-                    <a
+                    <Link
                         className="burger-menu__link"
-                        href="/messages"
+                        to="/messages"
                         onClick={onClose}
                     >
                         <span className="burger-menu__link-content">
-                            <MessageCircle size={22} />
+                            <MessageCircle
+                                size={22}
+                            />
 
-                            <span>Chats</span>
+                            <span>
+                                Chats
+                            </span>
 
-                            {unreadMessages > 0 && (
-                                <span className="burger-menu__count">
-                                    {unreadMessages}
+                            {unreadCount >
+                                0 && (
+                                    <span className="burger-menu__count">
+                                        {unreadCount > 99
+                                            ? '99+'
+                                            : unreadCount}
+                                    </span>
+                                )}
+                        </span>
+
+                        <ChevronRight
+                            size={20}
+                        />
+                    </Link>
+
+                    <Link
+                        className="burger-menu__link"
+                        to="/my-events"
+                        onClick={onClose}
+                    >
+                        <span className="burger-menu__link-content">
+                            <CalendarDays
+                                size={22}
+                            />
+
+                            <span>
+                                My events
+                            </span>
+                        </span>
+
+                        <ChevronRight
+                            size={20}
+                        />
+                    </Link>
+
+                    <Link
+                        className="burger-menu__link"
+                        to="/squads"
+                        onClick={onClose}
+                    >
+                        <span className="burger-menu__link-content">
+                            <Users size={22} />
+
+                            <span>
+                                Squads
+                            </span>
+                        </span>
+
+                        <ChevronRight
+                            size={20}
+                        />
+                    </Link>
+
+                    <Link
+                        className="burger-menu__link"
+                        to="/my-squads"
+                        onClick={onClose}
+                    >
+                        <span className="burger-menu__link-content">
+                            <Users size={22} />
+
+                            <span>
+                                My squads
+                            </span>
+                        </span>
+
+                        <ChevronRight
+                            size={20}
+                        />
+                    </Link>
+
+                    <Link
+                        className="burger-menu__link"
+                        to="/profile"
+                        onClick={onClose}
+                    >
+                        <span className="burger-menu__link-content">
+                            <UserRound
+                                size={22}
+                            />
+
+                            <span>
+                                Profile
+                            </span>
+                        </span>
+
+                        <ChevronRight
+                            size={20}
+                        />
+                    </Link>
+
+                    {user?.role ===
+                        'admin' && (
+                            <Link
+                                className="burger-menu__link burger-menu__link--admin"
+                                to="/admin"
+                                onClick={
+                                    onClose
+                                }
+                            >
+                                <span className="burger-menu__link-content">
+                                    <ShieldCheck
+                                        size={
+                                            22
+                                        }
+                                    />
+
+                                    <span>
+                                        Admin
+                                    </span>
                                 </span>
-                            )}
-                        </span>
 
-                        <ChevronRight size={20} />
-                    </a>
-
-                    <a
-                        className="burger-menu__link"
-                        href="/my-events"
-                        onClick={onClose}
-                    >
-                        <span className="burger-menu__link-content">
-                            <CalendarDays size={22} />
-
-                            <span>My events</span>
-                        </span>
-
-                        <ChevronRight size={20} />
-                    </a>
-
-                    <a
-                        className="burger-menu__link"
-                        href="/settings"
-                        onClick={onClose}
-                    >
-                        <span className="burger-menu__link-content">
-                            <Settings size={22} />
-
-                            <span>Settings</span>
-                        </span>
-
-                        <ChevronRight size={20} />
-                    </a>
-
-                    <a
-                        className="burger-menu__link"
-                        href="/profile"
-                        onClick={onClose}
-                    >
-                        <span className="burger-menu__link-content">
-                            <UserRound size={22} />
-
-                            <span>Profile</span>
-                        </span>
-
-                        <ChevronRight size={20} />
-                    </a>
+                                <ChevronRight
+                                    size={20}
+                                />
+                            </Link>
+                        )}
                 </nav>
             </div>
         </div>
     );
 
-    return createPortal(menu, document.body);
+    return createPortal(
+        menu,
+        document.body,
+    );
 };

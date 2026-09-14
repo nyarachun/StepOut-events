@@ -8,6 +8,10 @@ import { EventsModule } from './events/events.module.js';
 import { UsersModule } from './users/users.module.js';
 import { CitiesModule } from './cities/cities.module.js';
 import { AuthModule } from './auth/auth.module.js';
+import { AchievementsModule } from './achievements/achievements.module.js';
+import { ChatsModule } from './chats/chats.module.js';
+import { SquadsModule } from './squads/squads.module.js';
+import { AdminModule } from './admin/admin.module.js';
 
 @Module({
   imports: [
@@ -35,6 +39,10 @@ import { AuthModule } from './auth/auth.module.js';
     EventsModule,
 
     AuthModule,
+    AchievementsModule,
+    ChatsModule,
+    SquadsModule,
+    AdminModule,
   ],
 })
 export class AppModule {}
