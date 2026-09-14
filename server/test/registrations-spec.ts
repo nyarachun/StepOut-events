@@ -136,7 +136,7 @@ describe('Registrations', () => {
     const response = await request(
       app.getHttpServer(),
     )
-      .get('/registrations/me')
+      .get('/registrations/my')
       .set('Authorization', `Bearer ${userToken}`)
       .expect(200);
 

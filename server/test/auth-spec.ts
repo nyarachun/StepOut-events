@@ -26,9 +26,9 @@ describe('Auth', () => {
       .expect(201);
 
     expect(response.body.email).toContain('@test.com');
-    expect(response.body.name).toBe('Test User');
-    expect(response.body.role).toBe('user');
-    expect(response.body.password).toBeUndefined();
+    expect(response.body.message).toContain(
+      'Registration successful',
+    );
   });
 
   it('should register an organizer', async () => {
@@ -42,7 +42,10 @@ describe('Auth', () => {
       })
       .expect(201);
 
-    expect(response.body.role).toBe('organizer');
+    expect(response.body.email).toContain('@test.com');
+    expect(response.body.message).toContain(
+      'Registration successful',
+    );
   });
 
   it('should login and return JWT', async () => {

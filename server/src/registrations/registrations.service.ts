@@ -1,90 +1,211 @@
 import {
-  ConflictException,
-  Injectable,
-  NotFoundException,
+    ConflictException,
+    ForbiddenException,
+    Injectable,
+    NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
-import { Registration } from './entities/registration.entity.js';
-import { User } from '../users/entities/user.entity.js';
 import { Event } from '../events/entities/event.entity.js';
+import { User } from '../users/entities/user.entity.js';
 import { CreateRegistrationDto } from './dto/create-registration.dto.js';
+import { Registration } from './entities/registration.entity.js';
 
 @Injectable()
 export class RegistrationsService {
-  constructor(
-    @InjectRepository(Registration)
-    private readonly registrationRepository: Repository<Registration>,
+    constructor(
+        @InjectRepository(Registration)
+        private readonly registrationRepository: Repository<Registration>,
 
-    @InjectRepository(User)
-    private readonly userRepository: Repository<User>,
+        @InjectRepository(Event)
+        private readonly eventRepository: Repository<Event>,
 
-    @InjectRepository(Event)
-    private readonly eventRepository: Repository<Event>,
-  ) {}
+        @InjectRepository(User)
+        private readonly userRepository: Repository<User>,
+    ) {}
 
-  async create(userId: number, createRegistrationDto: CreateRegistrationDto) {
-    const { eventId }: CreateRegistrationDto = createRegistrationDto;
+    async create(
+        userId: number,
+        createRegistrationDto: CreateRegistrationDto,
+    ) {
+        const user =
+            await this.userRepository.findOneBy({
+                id: userId,
+            });
 
-    const user = await this.userRepository.findOneBy({
-      id: userId,
-    });
+        if (!user) {
+            throw new NotFoundException(
+                'User not found',
+            );
+        }
 
-    if (!user) {
-      throw new NotFoundException(`User with id ${userId} not found`);
+        const event =
+            await this.eventRepository.findOne({
+                where: {
+                    id: createRegistrationDto.eventId,
+                },
+                relations: {
+                    organizer: true,
+                },
+            });
+
+        if (!event) {
+            throw new NotFoundException(
+                'Event not found',
+            );
+        }
+
+        if (
+            event.organizer.id ===
+            userId
+        ) {
+            throw new ForbiddenException(
+                'Organizer cannot register for their own event',
+            );
+        }
+
+        const existingRegistration =
+            await this.registrationRepository.findOne(
+                {
+                    where: {
+                        user: {
+                            id: userId,
+                        },
+                        event: {
+                            id: event.id,
+                        },
+                    },
+                },
+            );
+
+        if (existingRegistration) {
+            throw new ConflictException(
+                'You are already registered for this event',
+            );
+        }
+
+        const registeredCount =
+            await this.registrationRepository.count(
+                {
+                    where: {
+                        event: {
+                            id: event.id,
+                        },
+                    },
+                },
+            );
+
+        if (
+            registeredCount >=
+            event.capacity
+        ) {
+            throw new ConflictException(
+                'This event is full',
+            );
+        }
+
+        const registration =
+            this.registrationRepository.create(
+                {
+                    user,
+                    event,
+                },
+            );
+
+        return this.registrationRepository.save(
+            registration,
+        );
     }
 
-    const event = await this.eventRepository.findOneBy({
-      id: eventId,
-    });
-
-    if (!event) {
-      throw new NotFoundException(`Event with id ${eventId} not found`);
+    async findMyRegistrations(
+        userId: number,
+    ) {
+        return this.registrationRepository.find(
+            {
+                where: {
+                    user: {
+                        id: userId,
+                    },
+                },
+                relations: {
+                    event: true,
+                },
+                order: {
+                    createdAt: 'DESC',
+                },
+            },
+        );
     }
 
-    const existingRegistration = await this.registrationRepository.findOne({
-      where: {
-        user: { id: userId },
-        event: { id: eventId },
-      },
-    });
+    async findMyRegistrationForEvent(
+        userId: number,
+        eventId: number,
+    ) {
+        const registration =
+            await this.registrationRepository.findOne(
+                {
+                    where: {
+                        user: {
+                            id: userId,
+                        },
+                        event: {
+                            id: eventId,
+                        },
+                    },
+                    relations: {
+                        event: true,
+                    },
+                },
+            );
 
-    if (existingRegistration) {
-      throw new ConflictException('You are already registered for this event');
+        if (!registration) {
+            throw new NotFoundException(
+                'Registration not found',
+            );
+        }
+
+        return registration;
     }
 
-    const registration = this.registrationRepository.create({
-      user,
-      event,
-    });
+    async remove(
+        userId: number,
+        registrationId: number,
+    ) {
+        const registration =
+            await this.registrationRepository.findOne(
+                {
+                    where: {
+                        id: registrationId,
+                    },
+                    relations: {
+                        user: true,
+                    },
+                },
+            );
 
-    return this.registrationRepository.save(registration);
-  }
+        if (!registration) {
+            throw new NotFoundException(
+                'Registration not found',
+            );
+        }
 
-  async findUserRegistrations(userId: number) {
-    return this.registrationRepository.find({
-      where: {
-        user: { id: userId },
-      },
-      relations: {
-        event: true,
-      },
-    });
-  }
+        if (
+            registration.user.id !==
+            userId
+        ) {
+            throw new ForbiddenException(
+                'You can only cancel your own registration',
+            );
+        }
 
-  async remove(userId: number, eventId: number) {
-    const registration = await this.registrationRepository.findOne({
-      where: {
-        user: { id: userId },
-        event: { id: eventId },
-      },
-    });
+        await this.registrationRepository.remove(
+            registration,
+        );
 
-    if (!registration) {
-      throw new NotFoundException('Registration not found');
+        return {
+            message:
+                'Registration cancelled successfully',
+        };
     }
-
-    await this.registrationRepository.remove(registration);
-  }
 }

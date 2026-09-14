@@ -1,13 +1,8 @@
-import axios from 'axios';
-
 import type { City } from '../types/city';
-
-const API_URL = 'https://stepout-events.onrender.com';
+import { api } from './api';
 
 export const getCities = async () => {
-  const response = await axios.get<City[]>(
-    `${API_URL}/cities`,
-  );
+  const response = await api.get<City[]>('/cities');
 
   return response.data;
 };

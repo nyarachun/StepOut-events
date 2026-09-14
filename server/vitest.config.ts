@@ -8,6 +8,10 @@ export default defineConfig({
   test: {
     globals: true,
     root: './',
-    include: ['**/*.spec.ts'],
+    include: ['**/*.spec.ts', '**/*-spec.ts'],
+    setupFiles: ['./test/setup.ts'],
+    fileParallelism: false,
+    maxWorkers: 1,
+    hookTimeout: 30000,
   },
 });

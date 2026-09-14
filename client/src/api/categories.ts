@@ -1,16 +1,12 @@
-import axios from 'axios';
+import { api } from './api';
 
 export type Category = {
   id: number;
   name: string;
 };
 
-const API_URL = 'https://stepout-events.onrender.com';
-
 export const getCategories = async () => {
-  const response = await axios.get<Category[]>(
-    `${API_URL}/categories`,
-  );
+  const response = await api.get<Category[]>('/categories');
 
   return response.data;
 };
