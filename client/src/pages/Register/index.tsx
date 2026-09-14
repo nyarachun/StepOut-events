@@ -14,13 +14,11 @@ import {
 } from 'react-router-dom';
 
 import { api } from '../../api/api';
-import { useTheme } from '../../context/ThemeContext';
 
 import './Register.scss';
 
 const Register = () => {
     const navigate = useNavigate();
-    const { theme } = useTheme();
 
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
@@ -45,11 +43,6 @@ const Register = () => {
 
     const [isLoading, setIsLoading] =
         useState(false);
-
-    const backgroundImage =
-        theme === 'dark'
-            ? `${import.meta.env.BASE_URL}images/background-dark.svg`
-            : `${import.meta.env.BASE_URL}images/background.svg`;
 
     const handleSubmit = async (
         event: FormEvent<HTMLFormElement>,
@@ -104,8 +97,8 @@ const Register = () => {
                         errorMessage,
                     )
                         ? errorMessage.join(
-                              ', ',
-                          )
+                            ', ',
+                        )
                         : errorMessage ||
                           'Registration failed.',
                 );
@@ -120,12 +113,7 @@ const Register = () => {
     };
 
     return (
-        <main
-            className="register-page"
-            style={{
-                backgroundImage: `url("${backgroundImage}")`,
-            }}
-        >
+        <main className="register-page">
             <section className="register-page__content">
                 <div className="register-page__container">
                     <Link
