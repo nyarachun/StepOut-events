@@ -10,7 +10,6 @@ import EventDetails from './pages/EventDetails';
 import EventRegistration from './pages/EventRegistration';
 import Events from './pages/Events';
 import Favorites from './pages/Favorites';
-import ForgotPassword from './pages/ForgotPassword';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import MyEvents from './pages/MyEvents';
@@ -19,7 +18,6 @@ import Profile from './pages/Profile';
 import Register from './pages/Register';
 import Rights from './pages/Rights';
 import Squads from './pages/Squads';
-import VerifyEmail from './pages/VerifyEmail';
 
 const AppContent = () => {
   const location = useLocation();
@@ -78,16 +76,6 @@ const AppContent = () => {
           <Route
             path="/achievements"
             element={<Achievements />}
-          />
-
-          <Route
-            path="/verify-email"
-            element={<VerifyEmail />}
-          />
-
-          <Route
-            path="/forgot-password"
-            element={<ForgotPassword />}
           />
 
           <Route

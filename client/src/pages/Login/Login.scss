@@ -90,7 +90,7 @@
         font-size: 14px;
 
         &::placeholder {
-            color: var(--text-muted);
+            color: var(--accent-color);
         }
 
         &:focus {
@@ -124,7 +124,7 @@
     transform: translateY(-50%);
 
     background: transparent;
-    color: var(--text-muted);
+    color: var(--accent-color);
 
     cursor: pointer;
 
@@ -184,9 +184,7 @@
     }
 }
 
-.login__remember
-    input:checked
-    + .login__checkbox {
+.login__remember input:checked+.login__checkbox {
     border-color: var(--accent-color);
 
     background: var(--accent-color);
@@ -194,19 +192,6 @@
 
     svg {
         opacity: 1;
-    }
-}
-
-.login__forgot {
-    color: var(--text-secondary);
-
-    text-decoration: none;
-
-    font-size: 11px;
-    font-weight: 600;
-
-    &:hover {
-        color: var(--accent-color);
     }
 }
 

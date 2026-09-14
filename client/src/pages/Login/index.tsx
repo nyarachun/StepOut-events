@@ -23,7 +23,6 @@ import './Login.scss';
 
 type LoginLocationState = {
     email?: string;
-    verified?: boolean;
 };
 
 const Login = () => {
@@ -35,27 +34,17 @@ const Login = () => {
 
     const locationState =
         location.state as
-            | LoginLocationState
-            | null;
+        | LoginLocationState
+        | null;
 
     const [email, setEmail] = useState(
         locationState?.email || '',
     );
-
-    const [password, setPassword] =
-        useState('');
-
-    const [rememberMe, setRememberMe] =
-        useState(false);
-
-    const [showPassword, setShowPassword] =
-        useState(false);
-
-    const [isLoading, setIsLoading] =
-        useState(false);
-
-    const [error, setError] =
-        useState('');
+    const [password, setPassword] = useState('');
+    const [rememberMe, setRememberMe] = useState(false);
+    const [showPassword, setShowPassword] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState('');
 
     const backgroundImage =
         theme === 'dark'
@@ -66,48 +55,27 @@ const Login = () => {
         event: FormEvent<HTMLFormElement>,
     ) => {
         event.preventDefault();
-
         setError('');
         setIsLoading(true);
 
         try {
-            const response = await api.post(
-                '/auth/login',
-                {
-                    email,
-                    password,
-                },
-            );
+            const response = await api.post('/auth/login', {
+                email,
+                password,
+            });
 
-            const token =
-                response.data.access_token;
-
-            login(
-                token,
-                rememberMe,
-            );
-
+            login(response.data.access_token, rememberMe);
             navigate('/profile');
         } catch (requestError) {
-            if (
-                axios.isAxiosError(
-                    requestError,
-                )
-            ) {
-                const message =
-                    requestError.response
-                        ?.data?.message;
-
+            if (axios.isAxiosError(requestError)) {
+                const message = requestError.response?.data?.message;
                 setError(
                     Array.isArray(message)
                         ? message.join(', ')
-                        : message ||
-                          'Invalid email or password.',
+                        : message || 'Invalid email or password.',
                 );
             } else {
-                setError(
-                    'Something went wrong. Please try again.',
-                );
+                setError('Something went wrong. Please try again.');
             }
         } finally {
             setIsLoading(false);
@@ -133,14 +101,6 @@ const Login = () => {
                         </h1>
                     </div>
 
-                    {locationState?.verified && (
-                        <p className="login__success">
-                            Email verified
-                            successfully. You can
-                            now sign in.
-                        </p>
-                    )}
-
                     <form
                         className="login__form"
                         onSubmit={handleSubmit}
@@ -164,7 +124,7 @@ const Login = () => {
                                 }
                                 required
                                 autoComplete="email"
-                            />
+                                className="login__fieldEmail"></input>
                         </div>
 
                         <div className="login__field">
@@ -246,12 +206,6 @@ const Login = () => {
                                 </span>
                             </label>
 
-                            <Link
-                                className="login__forgot"
-                                to="/forgot-password"
-                            >
-                                Forgot Password?
-                            </Link>
                         </div>
 
                         {error && (
@@ -288,7 +242,7 @@ const Login = () => {
                     </p>
                 </div>
             </section>
-        </main>
+        </main >
     );
 };
 

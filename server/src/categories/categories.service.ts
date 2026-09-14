@@ -9,12 +9,16 @@ import { Repository } from 'typeorm';
 import { CreateCategoryDto } from './dto/create-category.dto.js';
 import { UpdateCategoryDto } from './dto/update-category.dto.js';
 import { Category } from './entities/category.entity.js';
+import { Event } from '../events/entities/event.entity.js';
 
 @Injectable()
 export class CategoriesService {
   constructor(
     @InjectRepository(Category)
     private readonly categoryRepository: Repository<Category>,
+
+    @InjectRepository(Event)
+    private readonly eventRepository: Repository<Event>,
   ) {}
 
   async create(
@@ -100,6 +104,15 @@ export class CategoriesService {
 
   async remove(id: number) {
     const category = await this.findOne(id);
+
+    await this.eventRepository
+      .createQueryBuilder()
+      .update(Event)
+      .set({ category: null })
+      .where('"categoryId" = :categoryId', {
+        categoryId: id,
+      })
+      .execute();
 
     await this.categoryRepository.remove(category);
 

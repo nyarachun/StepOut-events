@@ -50,11 +50,8 @@ const Register = () => {
         event.preventDefault();
 
         setError('');
-
         if (password !== confirmPassword) {
-            setError(
-                'Passwords do not match.',
-            );
+            setError('Passwords do not match.');
 
             return;
         }
@@ -77,35 +74,21 @@ const Register = () => {
                 role,
             });
 
-            navigate('/verify-email', {
-                state: {
-                    email,
-                },
+            navigate('/login', {
+                state: { email },
             });
         } catch (requestError) {
-            if (
-                axios.isAxiosError(
-                    requestError,
-                )
-            ) {
+            if (axios.isAxiosError(requestError)) {
                 const errorMessage =
-                    requestError.response
-                        ?.data?.message;
+                    requestError.response?.data?.message;
 
                 setError(
-                    Array.isArray(
-                        errorMessage,
-                    )
-                        ? errorMessage.join(
-                            ', ',
-                        )
-                        : errorMessage ||
-                          'Registration failed.',
+                    Array.isArray(errorMessage)
+                        ? errorMessage.join(', ')
+                        : errorMessage || 'Registration failed.',
                 );
             } else {
-                setError(
-                    'Registration failed.',
-                );
+                setError('Registration failed.');
             }
         } finally {
             setIsLoading(false);
@@ -201,8 +184,8 @@ const Register = () => {
                                     setRole(
                                         event.target
                                             .value as
-                                            | 'user'
-                                            | 'organizer',
+                                        | 'user'
+                                        | 'organizer',
                                     )
                                 }
                             >

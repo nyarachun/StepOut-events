@@ -47,7 +47,7 @@ export class Event {
   organizer: User;
 
   @ManyToOne(() => Category)
-  category: Category;
+  category: Category | null;
 
   @ManyToOne(() => City)
   city: City;
